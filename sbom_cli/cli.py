@@ -31,6 +31,7 @@ def cli():
     """SBOM CLI tool for ingesting CycloneDX 1.6 SBOMs into MongoDB."""
     pass
 
+# TODO: Drop DB and collection names here and just use defaults
 @cli.command()
 @click.option("--component", help="Search SBOMs for a component by name")
 @click.option("--version", help="Component version (requires --component)")
@@ -75,11 +76,13 @@ def query(component, version, license_name, host, port, username, password, db_n
             return
 
         for sbom in results:
-            click.secho(f"SBOM ID: {sbom.get('_id')}", fg="green")
+            click.secho(f'SBOM NAME: {sbom.get("metadata").get("component").get("name")}', fg="green")
+            
     except errors.PyMongoError as e:
         click.secho(f"Error querying SBOMs: {e}", fg="red")
         raise click.Abort()
 
+# TODO: Drop DB and collection names here and just use defaults
 @cli.command()
 @click.argument("file", type=click.Path(exists=True, dir_okay=False))
 @click.option("--host", default="localhost", help="MongoDB host")
