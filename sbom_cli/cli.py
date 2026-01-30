@@ -34,6 +34,7 @@ def cli():
 # TODO: Drop DB and collection names here and just use defaults
 @cli.command()
 @click.option("--component", help="Search SBOMs for a component by name")
+@click.option("--components", help="Search SBOMs for a component by name")
 @click.option("--version", help="Component version (requires --component)")
 @click.option("--license", "license_name", help="Search SBOMs by license name")
 @click.option("--host", default="localhost", help="MongoDB host")
@@ -42,13 +43,16 @@ def cli():
 @click.option("--password", default=None, help="MongoDB password (prompted if not provided)")
 @click.option("--db-name", default="sbom_db", help="Database name")
 @click.option("--collection-name", default="sboms", help="Collection name")
-def query(component, version, license_name, host, port, username, password, db_name, collection_name):
+def query(component, components, version, license_name, host, port, username, password, db_name, collection_name):
     """Query SBOMs by component name/version or license."""
     if username and not password:
         password = getpass(f"Password for MongoDB user '{username}': ")
 
-    if not component and not license_name or (component and license_name):
-        click.secho("Error: Must provide either --component or --license, but not both", fg="red")
+    if not component and not license_name and not components:
+        click.secho("Error: Must provide either --component, --components, or --license", fg="red")
+        raise click.Abort()
+    if (component and license_name) or (component and components) or (license_name and components):
+        click.secho("Error: May only provide one of --component, --components, or --license", fg="red")
         raise click.Abort()
 
     client = get_mongo_client(host, port, username, password)
@@ -64,6 +68,10 @@ def query(component, version, license_name, host, port, username, password, db_n
         mongo_query["metadata.component.name"] = component
         if version:
             mongo_query["metadata.component.version"] = version
+    if components:
+        mongo_query["components.name"] = components
+        if version:
+            mongo_query["components.version"] = version
 
     if license_name:
         # CycloneDX stores licenses in components[*].licenses[*].license.name
@@ -111,9 +119,8 @@ def ingest(file, host, port, username, password, db_name, collection_name):
 
     # Validate CycloneDX version
     version = sbom_data.get("bomFormat")
-    spec_version = sbom_data.get("specVersion")
     if version != "CycloneDX":
-        click.secho("Warning: SBOM is not CycloneDX 1.6 format.", fg="yellow")
+        click.secho("Warning: SBOM is not CycloneDX format.", fg="yellow")
 
     # Connect to MongoDB
     client = get_mongo_client(host, port, username, password)

@@ -33,6 +33,16 @@ sbom-cli query --component "keycloak-parent" \
     --collection-name sboms
 ```
 
+```
+sbom-cli query --components "jboss-logging"  --version "3.4.1.Final" \
+    --host localhost \
+    --port 27017 \
+    --username admin \
+    --password password \
+    --db-name sbom_db \
+    --collection-name sboms
+```
+
 
 #### Proton Bridge
 ```
