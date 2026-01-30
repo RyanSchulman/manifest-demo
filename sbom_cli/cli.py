@@ -60,10 +60,7 @@ def query(component, components, version, license_name, host, port, username, pa
     collection = db[collection_name]
 
     mongo_query = {}
-
-    # TODO: Support the component and components section, not clear if this is actually requred from the
-    # task since it just says "component" and not "components". I would just add another input called
-    # `components` to accomplish this
+    
     if component:
         mongo_query["metadata.component.name"] = component
         if version:
