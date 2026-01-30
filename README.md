@@ -76,3 +76,34 @@ sbom-cli query --license "Apache-2.0" \
     --collection-name sboms
 
 ```
+
+#### Neither
+```
+sbom-cli query --license "Garbage" \
+    --host localhost \
+    --port 27017 \
+    --username admin \
+    --password password \
+    --db-name sbom_db \
+    --collection-name sboms
+
+```
+
+```
+sbom-cli query --component "garbage" --version "v1.6.3" \
+    --host localhost \
+    --port 27017 \
+    --username admin \
+    --password password \
+    --db-name sbom_db \
+    --collection-name sboms
+```
+```
+sbom-cli query --component "github.com/ProtonMail/proton-bridge" --version "garbage" \
+    --host localhost \
+    --port 27017 \
+    --username admin \
+    --password password \
+    --db-name sbom_db \
+    --collection-name sboms
+```
