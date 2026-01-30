@@ -1,5 +1,5 @@
 ## Setup 
-You may need to `export PATH="$HOME/.local/bin:$PATH"`
+You may need to `export PATH="$HOME/.local/bin:$PATH"` to get the cli to work properly
 
 Run ./setup.sh
 
